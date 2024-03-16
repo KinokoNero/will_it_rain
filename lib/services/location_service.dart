@@ -3,47 +3,53 @@ import 'dart:async';
 import 'package:location/location.dart';
 
 class LocationService {
-  Location location = Location();
-  late bool _serviceEnabled;
-  late PermissionStatus _permissionStatus;
-  late LocationData _locationData;
+  static Location _location = Location();
+  static late bool _serviceEnabled;
+  static late PermissionStatus _permissionStatus;
+  //static late LocationData _locationData;
 
   LocationService() {
-    location = Location();
-    init();
-  }
-
-  init() async {
-    location.enableBackgroundMode(enable: true);
-
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
-    }
-
-    _permissionStatus = await location.hasPermission();
-    if (_permissionStatus == PermissionStatus.denied) {
-      _permissionStatus = await location.requestPermission();
-      if (_permissionStatus != PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    _locationData = await location.getLocation();
-  }
-
-  Future<void> updateLocation() async {
     try {
-      _locationData = await location.getLocation();
+      _location = Location();
+      _init();
     }
     catch (e) {
-      print('Error fetching location: $e');
+      print('Caught an exception: $e');
       rethrow;
     }
   }
 
-  LocationData get locationData => _locationData;
+  _init() async {
+    _serviceEnabled = await _location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await _location.requestService();
+      if (!_serviceEnabled) {
+        throw Exception('Location service is not enabled!');
+      }
+    }
+
+    _permissionStatus = await _location.hasPermission();
+    if (_permissionStatus == PermissionStatus.denied) {
+      _permissionStatus = await _location.requestPermission();
+      if (_permissionStatus != PermissionStatus.granted) {
+        throw Exception('Location service permission has not been granted!');
+      }
+    }
+  }
+
+  static Future<LocationData> getLocationData() async {
+    if (!_serviceEnabled) {
+      throw Exception('Location service is not enabled!');
+    }
+    if (_permissionStatus != PermissionStatus.granted) {
+      throw Exception('Location service permission has not been granted!');
+    }
+    
+    LocationData locationData = await _location.getLocation();
+    if (locationData.latitude == null || locationData.longitude == null) {
+      throw Exception('Could not get location data!');
+    }
+
+    return locationData;
+  }
 }

@@ -1,18 +1,37 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
 
 import 'package:will_it_rain/api_key.dart';
 import 'package:will_it_rain/models/forecast_model.dart';
 
 class WeatherService {
-  getLocationKey(double latitude, double longitude) async {
+  //static late List<ForecastDay> _currentForecast;
+
+  WeatherService() {
+    //_init();
+  }
+
+  /*_init() async {
+    try {
+      //LocationData locationData = await LocationService().locationData;
+      //var locationKey = await _getLocationKey(locationData);
+      //_currentForecast = await _get5DayForecast(locationKey);
+    }
+    catch (e) {
+      print('Caught an exception: $e');
+      rethrow;
+    }
+  }*/
+
+  static _getLocationKey(LocationData locationData) async {
     final queryParams = {
       'apikey': apiKey,
-      'q': '${latitude.toString()},${longitude.toString()}',
+      'q': '${locationData.latitude.toString()},${locationData.longitude.toString()}',
       'details': true
     };
-    final Uri uri = Uri.http('dataservice.accuweather.com', '/locations/v1/cities/geoposition/search', queryParams);
+    final Uri uri = Uri.http('dataservice.accuweather.com',
+        '/locations/v1/cities/geoposition/search', queryParams);
 
     http.Response response = await http.get(uri);
 
@@ -30,10 +49,13 @@ class WeatherService {
     }
     else {
       print('Failed to fetch data. Status code: ${response.statusCode}'); //TODO: handle error codes
+      throw Exception(response.statusCode);
     }
   }
 
-  get5DayForecast(String locationKey) async {
+  static Future<List<ForecastDay>> get5DayForecast(LocationData locationData) async {
+    var locationKey = _getLocationKey(locationData);
+
     final queryParams = {
       'apikey': apiKey,
       'details': true,
@@ -43,7 +65,7 @@ class WeatherService {
 
     http.Response response = await http.get(uri);
 
-    var forecast = [];
+    List<ForecastDay> forecast = [];
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);
@@ -56,9 +78,12 @@ class WeatherService {
 
         return forecast;
       }
+      else {
+        throw Exception('Failed to get data for daily forecasts!');
+      }
     }
     else {
-      print('Failed to fetch data. Status code: ${response.statusCode}'); //TODO: handle error codes
+      throw Exception('Failed to fetch data. Status code: ${response.statusCode}');
     }
   }
 }
