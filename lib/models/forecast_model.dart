@@ -18,7 +18,7 @@ class ForecastDay {
       maxTemperature = dayEntry['Temperature']['Maximum']['Value'];
     }
     catch (e) {
-      print('Caught an exception: $e');
+      print('Caught an exception at forecast_model.dart: $e');
       rethrow;
     }
   }

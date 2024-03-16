@@ -6,29 +6,11 @@ import 'package:will_it_rain/api_key.dart';
 import 'package:will_it_rain/models/forecast_model.dart';
 
 class WeatherService {
-  //static late List<ForecastDay> _currentForecast;
-
-  WeatherService() {
-    //_init();
-  }
-
-  /*_init() async {
-    try {
-      //LocationData locationData = await LocationService().locationData;
-      //var locationKey = await _getLocationKey(locationData);
-      //_currentForecast = await _get5DayForecast(locationKey);
-    }
-    catch (e) {
-      print('Caught an exception: $e');
-      rethrow;
-    }
-  }*/
-
-  static _getLocationKey(LocationData locationData) async {
+  static Future<String> _getLocationKey(LocationData locationData) async {
     final queryParams = {
       'apikey': apiKey,
       'q': '${locationData.latitude.toString()},${locationData.longitude.toString()}',
-      'details': true
+      'details': 'true'
     };
     final Uri uri = Uri.http('dataservice.accuweather.com',
         '/locations/v1/cities/geoposition/search', queryParams);
@@ -45,21 +27,26 @@ class WeatherService {
           String canonicalLocationKey = details['CanonicalLocationKey'];
           return canonicalLocationKey;
         }
+        else {
+          throw Exception('Could not get the canonical location key data!');
+        }
+      }
+      else {
+        throw Exception('Could not get the location key details data!');
       }
     }
     else {
-      print('Failed to fetch data. Status code: ${response.statusCode}'); //TODO: handle error codes
-      throw Exception(response.statusCode);
+      throw Exception('Failed to fetch location key data. Status code: ${response.statusCode}');
     }
   }
 
   static Future<List<ForecastDay>> get5DayForecast(LocationData locationData) async {
-    var locationKey = _getLocationKey(locationData);
+    String locationKey = await _getLocationKey(locationData);
 
     final queryParams = {
       'apikey': apiKey,
-      'details': true,
-      'metric': true
+      'details': 'true',
+      'metric': 'true'
     };
     final Uri uri = Uri.http('dataservice.accuweather.com', '/forecasts/v1/daily/5day/$locationKey', queryParams);
 
@@ -83,7 +70,7 @@ class WeatherService {
       }
     }
     else {
-      throw Exception('Failed to fetch data. Status code: ${response.statusCode}');
+      throw Exception('Failed to fetch forecast data. Status code: ${response.statusCode}');
     }
   }
 }

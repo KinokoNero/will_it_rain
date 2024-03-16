@@ -4,9 +4,8 @@ import 'package:location/location.dart';
 
 class LocationService {
   static Location _location = Location();
-  static late bool _serviceEnabled;
-  static late PermissionStatus _permissionStatus;
-  //static late LocationData _locationData;
+  static bool _serviceEnabled = false;
+  static PermissionStatus _permissionStatus = PermissionStatus.denied;
 
   LocationService() {
     try {
@@ -14,7 +13,7 @@ class LocationService {
       _init();
     }
     catch (e) {
-      print('Caught an exception: $e');
+      print('Caught an exception at location_service.dart: $e');
       rethrow;
     }
   }
