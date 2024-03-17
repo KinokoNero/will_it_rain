@@ -3,10 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 import 'package:will_it_rain/api_key.dart';
-import 'package:will_it_rain/models/forecast_model.dart';
+import 'package:will_it_rain/models/weather_forecast_model.dart';
+
+import '../models/weather_model.dart';
 
 class WeatherProvider extends ChangeNotifier {
-  final List<ForecastDay> _forecast = [];
+  late final WeatherForecast _weatherForecast = WeatherForecast();
 
   Future<String> _getLocationKey(LocationData locationData) async {
     final queryParams = {
@@ -28,6 +30,34 @@ class WeatherProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> fetch12HourForecast(LocationData locationData) async {
+    String locationKey = await _getLocationKey(locationData);
+
+    final queryParams = {
+      'apikey': apiKey,
+      'details': 'true',
+      'metric': 'true'
+    };
+    final Uri uri = Uri.http('dataservice.accuweather.com', '/forecasts/v1/hourly/12hour/$locationKey', queryParams);
+
+    http.Response response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final forecastHoursData = data['DailyForecasts'];
+
+      for (var hourData in forecastHoursData) {
+        Weather weather = Weather(hourData, true);
+        _weatherForecast.currentDayHourlyWeather.add(weather);
+      }
+
+      notifyListeners();
+    }
+    else {
+      throw Exception('Failed to fetch forecast data. Status code: ${response.statusCode}');
+    }
+  }
+
   Future<void> fetch5DayForecast(LocationData locationData) async {
     String locationKey = await _getLocationKey(locationData);
 
@@ -42,11 +72,11 @@ class WeatherProvider extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      final List<dynamic> forecastDaysData = data['DailyForecasts'];
+      final forecastDaysData = data['DailyForecasts'];
 
       for (var dayData in forecastDaysData) {
-        ForecastDay forecastDay = ForecastDay(dayData);
-        _forecast.add(forecastDay);
+        Weather weather = Weather(dayData, false);
+        _weatherForecast.futureDaysDailyWeather.add(weather);
       }
 
       notifyListeners();
@@ -56,5 +86,11 @@ class WeatherProvider extends ChangeNotifier {
     }
   }
 
-  List<ForecastDay> get forecast => _forecast;
+  Future<void> fetchWeatherForecast(LocationData locationData) async {
+    await fetch12HourForecast(locationData);
+    await fetch5DayForecast(locationData);
+    notifyListeners();
+  }
+
+  WeatherForecast get weatherForecast => _weatherForecast;
 }
