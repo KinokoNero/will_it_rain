@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:location/location.dart';
 
 class LocationService {
@@ -37,13 +36,6 @@ class LocationService {
   }
 
   static Future<LocationData> getLocationData() async {
-    if (!_serviceEnabled) {
-      throw Exception('Location service is not enabled!');
-    }
-    if (_permissionStatus != PermissionStatus.granted) {
-      throw Exception('Location service permission has not been granted!');
-    }
-    
     LocationData locationData = await _location.getLocation();
     if (locationData.latitude == null || locationData.longitude == null) {
       throw Exception('Could not get location data!');
