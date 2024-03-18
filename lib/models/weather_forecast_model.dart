@@ -4,7 +4,10 @@ class WeatherForecast {
   late List<Weather> _currentDayHourlyWeather;
   late List<Weather> _futureDaysDailyWeather;
 
-  WeatherForecast();
+  WeatherForecast() {
+    _currentDayHourlyWeather = [];
+    _futureDaysDailyWeather = [];
+  }
 
   List<Weather> get futureDaysDailyWeather => _futureDaysDailyWeather;
 

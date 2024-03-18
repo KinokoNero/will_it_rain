@@ -12,7 +12,7 @@ class Weather {
   late final int _iconId;
   late final double? _rainAmount; // In millimeters
 
-  Weather(weatherData, bool is12HourForecast) {
+  Weather(Map<String, dynamic> weatherData, bool is12HourForecast) {
     if (is12HourForecast) {
       _dateTime = DateTime.parse(weatherData['DateTime']);
       _currentTemperature = weatherData['Temperature']['Value'];

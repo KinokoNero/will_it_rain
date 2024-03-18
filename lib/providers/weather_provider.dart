@@ -43,13 +43,18 @@ class WeatherProvider extends ChangeNotifier {
     http.Response response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final forecastHoursData = data['DailyForecasts'];
+      final List<dynamic> forecastHoursData = jsonDecode(response.body);//json.decode(response.body);
+      //final List<dynamic> forecastHoursData = data['DailyForecasts'];
 
       for (var hourData in forecastHoursData) {
         Weather weather = Weather(hourData, true);
         _weatherForecast.currentDayHourlyWeather.add(weather);
       }
+
+      /*forecastHoursData.forEach((key, hourData) {
+        Weather weather = Weather(hourData, true);
+        _weatherForecast.currentDayHourlyWeather.add(weather);
+      });*/
 
       notifyListeners();
     }
@@ -71,13 +76,18 @@ class WeatherProvider extends ChangeNotifier {
     http.Response response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final forecastDaysData = data['DailyForecasts'];
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      final List<dynamic> forecastDaysData = data['DailyForecasts'];
 
       for (var dayData in forecastDaysData) {
         Weather weather = Weather(dayData, false);
         _weatherForecast.futureDaysDailyWeather.add(weather);
       }
+
+      /*forecastDaysData.forEach((key, dayData) {
+        Weather weather = Weather(dayData, false);
+        _weatherForecast.futureDaysDailyWeather.add(weather);
+      });*/
 
       notifyListeners();
     }
