@@ -29,6 +29,33 @@ class Weather {
     }
   }
 
+  String get weekDayName {
+    DateTime now = DateTime.now();
+    if (_dateTime.day == now.day && _dateTime.month == now.month && _dateTime.year == now.year) {
+      return "Today";
+    }
+
+    int dayOfWeek = _dateTime.weekday;
+    switch (dayOfWeek) {
+      case 1:
+        return 'Monday';
+      case 2:
+        return 'Tuesday';
+      case 3:
+        return 'Wednesday';
+      case 4:
+        return 'Thursday';
+      case 5:
+        return 'Friday';
+      case 6:
+        return 'Saturday';
+      case 7:
+        return 'Sunday';
+      default:
+        return 'Unknown';
+    }
+  }
+
   double? get rainAmount => _rainAmount;
 
   int get iconId => _iconId;

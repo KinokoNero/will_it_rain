@@ -18,13 +18,13 @@ void main() {
 }
 
 class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
-  _AppState createState() => _AppState();
+  AppState createState() => AppState();
 }
 
-class _AppState extends State<App> {
+class AppState extends State<App> {
   late Future<void> _weatherInitialization;
 
   @override
@@ -43,7 +43,7 @@ class _AppState extends State<App> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Weather App'),
+          title: const Text('Will it rain?'),
         ),
         body: Consumer<WeatherProvider>(
           builder: (context, weatherProvider, child) {
@@ -54,16 +54,28 @@ class _AppState extends State<App> {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (snapshot.hasError) {
+                }
+                else if (snapshot.hasError) {
                   return Center(
                     child: Text('Error: ${snapshot.error}'),
                   );
-                } else {
+                }
+                else {
                   return const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      CurrentDayWeatherWidget(),
-                      FutureDaysWeatherWidget(),
+                      Expanded(
+                        child: CurrentDayWeatherWidget()
+                      ),
+                      Expanded(
+                        child: FutureDaysWeatherWidget()
+                      ),
+                      Text(
+                        'Data provided by AccuWeather',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8.0,
+                        ),
+                      ),
                     ],
                   );
                 }

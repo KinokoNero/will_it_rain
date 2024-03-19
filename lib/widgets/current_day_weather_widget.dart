@@ -24,49 +24,59 @@ class CurrentDayWeatherWidget extends StatelessWidget {
     }
 
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.5,
+      padding: const EdgeInsets.only(bottom: 16),
       color: Colors.blue,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '${closestWeather.currentTemperature} °C',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24.0,
+      child: Center(
+        child: Column(
+          children: [
+            Text(
+              '${closestWeather.currentTemperature?.round()}°C',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 48.0,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '${closestWeather.description}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
+            // TODO: add weather icon here
+            Text(
+              '${closestWeather.description}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24.0,
+              ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: weatherForecast.currentDayHourlyWeather.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                  padding: const EdgeInsets.all(10.0),
-                  color: Colors.white,
-                  child: Text(
-                    '${weatherForecast.currentDayHourlyWeather[index].dateTime.toString()}\n${weatherForecast.currentDayHourlyWeather[index].currentTemperature.toString()}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
+            Expanded(
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: weatherForecast.currentDayHourlyWeather.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: const EdgeInsets.all(8),
+                    color: Colors.blue[300],
+                    child: Column(
+                      children: [
+                        Text(
+                          '${weatherForecast.currentDayHourlyWeather[index].dateTime.hour}:${weatherForecast.currentDayHourlyWeather[index].dateTime.minute.toString().padLeft(2, '0')}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24.0,
+                          ),
+                        ),
+                        // TODO: add weather icon here
+                        Text(
+                          '${weatherForecast.currentDayHourlyWeather[index].currentTemperature?.round()}°C',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
