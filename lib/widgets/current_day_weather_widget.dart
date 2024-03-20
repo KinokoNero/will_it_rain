@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import '../models/weather_model.dart';
@@ -24,59 +26,83 @@ class CurrentDayWeatherWidget extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.only(bottom: 16),
-      color: Colors.blue,
-      child: Center(
-        child: Column(
-          children: [
-            Text(
-              '${closestWeather.currentTemperature?.round()}°C',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 48.0,
-              ),
+      decoration: BoxDecoration(
+          color: Colors.blue,
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.grey,
+              width: MediaQuery.of(context).size.height * 0.002
             ),
-            // TODO: add weather icon here
-            Text(
-              '${closestWeather.description}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24.0,
-              ),
+          )
+      ),
+      child: Column(
+        children: [
+          Flexible(child: Text(
+            '${closestWeather.currentTemperature?.round()}°C',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: MediaQuery.of(context).size.width * 0.13,
             ),
-            Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: weatherForecast.currentDayHourlyWeather.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    padding: const EdgeInsets.all(8),
-                    color: Colors.blue[300],
-                    child: Column(
-                      children: [
-                        Text(
-                          '${weatherForecast.currentDayHourlyWeather[index].dateTime.hour}:${weatherForecast.currentDayHourlyWeather[index].dateTime.minute.toString().padLeft(2, '0')}',
-                          style: const TextStyle(
+          ),),
+          Flexible(child: Image(
+            height: MediaQuery.of(context).size.height * 0.1,
+            image: closestWeather.weatherIcon,
+          ),),
+          Flexible(child: Text(
+            '${closestWeather.description}',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: MediaQuery.of(context).size.width * 0.07,
+            ),
+          ),),
+          Flexible(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: weatherForecast.currentDayHourlyWeather.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                      color: Colors.blue[300],
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: MediaQuery.of(context).size.width * 0.002
+                      )
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          '${weatherForecast.currentDayHourlyWeather[index].dateTime.hour}:00',
+                          style: TextStyle(
                             color: Colors.white,
-                            fontSize: 24.0,
+                            fontSize: MediaQuery.of(context).size.width * 0.06,
                           ),
                         ),
-                        // TODO: add weather icon here
-                        Text(
+                      ),
+                      Flexible(
+                        child: Image(
+                          height: MediaQuery.of(context).size.height * 0.08,
+                          image: weatherForecast.currentDayHourlyWeather[index].weatherIcon,
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
                           '${weatherForecast.currentDayHourlyWeather[index].currentTemperature?.round()}°C',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20.0,
+                            fontSize: MediaQuery.of(context).size.width * 0.06,
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

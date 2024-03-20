@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,25 +17,38 @@ class FutureDaysWeatherWidget extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         return Container(
           width: MediaQuery.of(context).size.width,
-          //margin: const EdgeInsets.symmetric(vertical: 5.0),
-          color: Colors.blue,
-          child: Center(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            border: Border(
+              bottom: BorderSide(
+                color: Colors.grey,
+                width: MediaQuery.of(context).size.height * 0.002,
+              ),
+            )
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(5),
+                Flexible(
                   child: Text(
-                    '${weatherForecast.futureDaysDailyWeather[index].dateTime.day.toString().padRight(1, '0')}/${weatherForecast.futureDaysDailyWeather[index].dateTime.month.toString().padRight(1, '0')} ${weatherForecast.futureDaysDailyWeather[index].weekDayName}',
-                    style: const TextStyle(
+                    '${weatherForecast.futureDaysDailyWeather[index].dateTime.day.toString().padLeft(2, '0')}/${weatherForecast.futureDaysDailyWeather[index].dateTime.month.toString().padLeft(2, '0')} ${weatherForecast.futureDaysDailyWeather[index].weekDayName}',
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20.0,
+                      fontSize: MediaQuery.of(context).size.width * 0.06,
                     ),
                   ),
                 ),
-                // TODO: add weather icon here
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10),
+                //const Spacer(),
+                Flexible(
+                  child: Image(
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    image: weatherForecast.futureDaysDailyWeather[index].weatherIcon,
+                  ),
+                ),
+                //const Spacer(),
+                Flexible(
                   child: Text(
                     '${weatherForecast.futureDaysDailyWeather[index].minTemperature?.round()}° / ${weatherForecast.futureDaysDailyWeather[index].maxTemperature?.round()}°',
                     style: const TextStyle(

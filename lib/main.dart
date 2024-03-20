@@ -63,17 +63,17 @@ class AppState extends State<App> {
                 else {
                   return const Column(
                     children: <Widget>[
-                      Expanded(
-                        child: CurrentDayWeatherWidget()
+                      Flexible(
+                        child: CurrentDayWeatherWidget(),
                       ),
-                      Expanded(
-                        child: FutureDaysWeatherWidget()
+                      Flexible(
+                        child: FutureDaysWeatherWidget(),
                       ),
                       Text(
                         'Data provided by AccuWeather',
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 8.0,
+                          color: Colors.black,
+                          fontSize: 16.0,
                         ),
                       ),
                     ],
