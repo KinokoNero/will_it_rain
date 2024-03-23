@@ -43,4 +43,6 @@ class LocationService {
 
     return locationData;
   }
+
+  static Location get location => _location;
 }
