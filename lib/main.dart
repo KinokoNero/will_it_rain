@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:will_it_rain/services/location_service.dart';
 import 'package:will_it_rain/providers/weather_provider.dart';
@@ -40,6 +41,13 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -61,20 +69,24 @@ class AppState extends State<App> {
                   );
                 }
                 else {
-                  return const Column(
-                    children: <Widget>[
-                      Flexible(
-                        child: CurrentDayWeatherWidget(),
-                      ),
-                      Flexible(
-                        child: FutureDaysWeatherWidget(),
-                      ),
-                      Text(
-                        'Data provided by AccuWeather',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                        ),
+                  return Column(
+                    children: [
+                      const CurrentDayWeatherWidget(),
+                      const FutureDaysWeatherWidget(),
+                      Column(
+                        children: [
+                          const Text(
+                            'Data provided by AccuWeather',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          Image(
+                            width: deviceSize.width * 0.4,
+                            image: const AssetImage('assets/accuweather-logo.png'),
+                          ),
+                        ]
                       ),
                     ],
                   );
@@ -87,78 +99,3 @@ class AppState extends State<App> {
     );
   }
 }
-
-/*void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  //runApp(const App());
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => WeatherProvider(),
-      child: const App(),
-    ),
-  );
-}
-
-class App extends StatefulWidget {
-  const App({super.key});
-
-  @override
-  AppState createState() => AppState();
-}
-
-class AppState extends State<App> {
-  late Future<void> _weatherInitialization;
-
-  @override
-  void initState() {
-    super.initState();
-    _weatherInitialization = _initializeWeatherData();
-  }
-
-  Future<void> _initializeWeatherData() async {
-    final weatherProvider = Provider.of<WeatherProvider>(context, listen: false);
-    await weatherProvider.fetchWeatherForecast(await LocationService.getLocationData());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => WeatherProvider(),
-      child: MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Weather App'),
-          ),
-          body: Consumer<WeatherProvider>(
-            builder: (context, cart, child) {
-              return FutureBuilder(
-                future: _weatherInitialization,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  else if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
-                  else {
-                    return const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        CurrentDayWeatherWidget(),
-                        FutureDaysWeatherWidget(),
-                      ],
-                    );
-                  }
-                },
-              );
-            },
-          ),
-        )
-      ),
-    );
-  }
-}*/
