@@ -3,8 +3,6 @@
 // or
 // data from 5 day forecast at the specific day
 
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 
 class Weather {
