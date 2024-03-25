@@ -1,42 +1,44 @@
-import 'package:timezone/timezone.dart' as tz;
-import 'package:will_it_rain/providers/weather_provider.dart';
-
 import '../models/scheduled_notification_model.dart';
 
 class ScheduledNotifications {
   static final ScheduledNotification _willItRainNotification = ScheduledNotification(
-      0,
-      'Prognoza pogody',
-      '',//() ? 'Dzisiaj nie będzie padać.' : 'Dzisiaj może padać, lepiej weź ze sobą parasol!', // TODO
-      _nextInstanceOfTime(
-          DateTime(
-              DateTime.now().year,
-              DateTime.now().month,
-              DateTime.now().day,
-              8,
-              0
-          )
+    0,
+    'Weather forecast',
+    'It won\'t rain today.',
+    _nextInstanceOfTime(
+      DateTime(
+        0, // year
+        0, // month
+        0, // day
+        8, // hour
+        0 // minute
       )
+    )
   );
 
   static final List<ScheduledNotification> scheduledNotifications = [
-    ScheduledNotification(
-        0,
-        'Prognoza pogody',
-        'Dzisiaj nie będzie padać.',
-        _nextInstanceOfTime(
-            DateTime(
-                DateTime.now().year,
-                DateTime.now().month,
-                DateTime.now().day,
-                8,
-                0
-            )
-        )
-    ),
+    _willItRainNotification,
+    _dailyWeatherSummary
   ];
 
-  static tz.TZDateTime _nextInstanceOfTime(DateTime scheduleTime) {
+  static DateTime _nextInstanceOfTime(DateTime scheduleTime) {
+    DateTime now = DateTime.now();
+
+    DateTime scheduledDate = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      scheduleTime.hour,
+      scheduleTime.minute
+    );
+
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    return scheduledDate;
+  }
+  /*static tz.TZDateTime _nextInstanceOfTime(DateTime scheduleTime) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     
     tz.TZDateTime scheduledDate = tz.TZDateTime(
@@ -53,5 +55,11 @@ class ScheduledNotifications {
     }
     
     return scheduledDate;
+  }*/
+
+  static void itWillRain(bool value) {
+    if (value == true) {
+      _willItRainNotification.body = 'It may rain today, better take an umbrella with you!';
+    }
   }
 }

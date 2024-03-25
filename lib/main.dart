@@ -11,7 +11,6 @@ final LocationService locationService = LocationService();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //final fetchedWeather = await WeatherService.fetchWeatherForecast();
   await NotificationService().init();
   await NotificationService.scheduleNotifications();
 

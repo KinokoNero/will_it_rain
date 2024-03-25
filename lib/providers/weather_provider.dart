@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 import 'package:will_it_rain/api_key.dart';
+import 'package:will_it_rain/data/scheduled_notifications.dart';
 import 'package:will_it_rain/models/weather_forecast_model.dart';
 
 import '../models/weather_model.dart';
@@ -48,6 +49,10 @@ class WeatherProvider extends ChangeNotifier {
       for (var hourData in forecastHoursData) {
         Weather weather = Weather(hourData, true);
         _weatherForecast.currentDayHourlyWeather.add(weather);
+
+        if (weather.rainAmount! > 0) {
+          ScheduledNotifications.itWillRain(true);
+        }
       }
 
       notifyListeners();
