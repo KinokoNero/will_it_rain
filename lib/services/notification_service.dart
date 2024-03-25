@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:will_it_rain/data/scheduled_notifications.dart';
@@ -6,7 +7,7 @@ import 'package:will_it_rain/models/notification_model.dart';
 import 'package:will_it_rain/models/scheduled_notification_model.dart';
 
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
+  static final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     // Notifications setup
@@ -23,53 +24,40 @@ class NotificationService {
         iOS: initializationSettingsIOS
     );
 
-    await notificationsPlugin.initialize(
-        initializationSettings,
-        //onDidReceiveBackgroundNotificationResponse: (NotificationResponse notificationResponse) async {}
-    );
+    await _notificationsPlugin.initialize(initializationSettings);
 
     // Scheduling setup
     tz.initializeTimeZones();
-    scheduleNotifications();
+    tz.setLocalLocation(tz.getLocation(await FlutterTimezone.getLocalTimezone()));
   }
 
-  notificationDetails() async {
-    return const NotificationDetails(
-      android: AndroidNotificationDetails('main_channel', 'Main Channel'),
-      iOS: DarwinNotificationDetails()
-    );
-  }
-
-  Future<void> showNotification(Notification notification) async {
+  /*Future<void> showNotification(Notification notification) async {
     await notificationsPlugin.show(
         notification.id,
         notification.title,
         notification.body,
-        const NotificationDetails(
-            android: AndroidNotificationDetails('main_channel', 'Main Channel'),
-            iOS: DarwinNotificationDetails()
-        )
+        notificationDetails
     );
-  }
+  }*/
 
-  Future<void> scheduleNotification(Notification notification, DateTime scheduledDateTime) async {
-    print(tz.TZDateTime.now(tz.local).add(const Duration(hours: 1, seconds: 15)));
-    await notificationsPlugin.zonedSchedule(
+  static Future<void> _scheduleNotification(Notification notification, DateTime scheduledDateTime) async {
+    await _notificationsPlugin.zonedSchedule(
         notification.id,
         notification.title,
         notification.body,
-        tz.TZDateTime.now(tz.local).add(const Duration(hours: 1, seconds: 15)),//tz.TZDateTime.from(scheduledDateTime, tz.local),
+        tz.TZDateTime.from(scheduledDateTime, tz.local),
         const NotificationDetails(
             android: AndroidNotificationDetails('main_channel', 'Main Channel'),
-            iOS: DarwinNotificationDetails()
+            iOS: DarwinNotificationDetails(),
         ),
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time
     );
   }
 
-  scheduleNotifications() async {
+  static Future<void> scheduleNotifications() async {
     for (ScheduledNotification scheduledNotification in ScheduledNotifications.scheduledNotifications) {
-      await scheduleNotification(scheduledNotification, scheduledNotification.scheduledTime);
+      await _scheduleNotification(scheduledNotification, scheduledNotification.scheduledTime);
     }
   }
 }

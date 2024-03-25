@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:will_it_rain/models/notification_model.dart' as notification;
 import 'package:will_it_rain/services/location_service.dart';
 import 'package:will_it_rain/providers/weather_provider.dart';
 import 'package:will_it_rain/services/notification_service.dart';
@@ -12,11 +11,9 @@ final LocationService locationService = LocationService();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  NotificationService ns = NotificationService();
-  await ns.init();//NotificationService().init();
-  //await ns.showNotification(notification.Notification(0, 'test', 'test'));
-  await ns.scheduleNotification(notification.Notification(1, 'test', 'test'), DateTime.now());
-
+  //final fetchedWeather = await WeatherService.fetchWeatherForecast();
+  await NotificationService().init();
+  await NotificationService.scheduleNotifications();
 
   runApp(
     ChangeNotifierProvider(
