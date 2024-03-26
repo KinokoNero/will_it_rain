@@ -12,7 +12,6 @@ final LocationService locationService = LocationService();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await NotificationService().init();
-  await NotificationService.scheduleNotifications();
 
   runApp(
     ChangeNotifierProvider(
@@ -40,7 +39,7 @@ class AppState extends State<App> {
 
   Future<void> _initializeWeatherData() async {
     final weatherProvider = Provider.of<WeatherProvider>(context, listen: false);
-    await weatherProvider.fetchWeatherForecast(await LocationService.getLocationData());
+    await weatherProvider.fetchWeatherForecast(await LocationService.getLocationData()).then((_) async => await NotificationService.scheduleNotifications());
   }
 
   @override

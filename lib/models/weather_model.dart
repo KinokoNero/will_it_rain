@@ -12,7 +12,7 @@ class Weather {
   late final double? _maxTemperature;
   late final String? _description;
   late final int _iconId;
-  late final double? _rainAmount; // In millimeters
+  late final int? _rainProbability; // %
 
   static const Map<int, String> iconMap = {
     1: 'clear',
@@ -60,7 +60,7 @@ class Weather {
       _currentTemperature = weatherData['Temperature']['Value'];
       _description = weatherData['IconPhrase'];
       _iconId = weatherData['WeatherIcon'];
-      _rainAmount = weatherData['Rain']['Value'];
+      _rainProbability = weatherData['RainProbability'];
     }
     else {
       _dateTime = DateTime.parse(weatherData['Date']);
@@ -68,6 +68,7 @@ class Weather {
       _maxTemperature = weatherData['Temperature']['Maximum']['Value'];
       _description = weatherData['Day']['IconPhrase'];
       _iconId = weatherData['Day']['Icon'];
+      _rainProbability = weatherData['Day']['RainProbability'];
     }
   }
 
@@ -102,7 +103,7 @@ class Weather {
     return AssetImage('assets/weathericons/${iconMap[iconId]}.png');
   }
 
-  double? get rainAmount => _rainAmount;
+  int? get rainProbability => _rainProbability;
 
   int get iconId => _iconId;
 

@@ -49,10 +49,6 @@ class WeatherProvider extends ChangeNotifier {
       for (var hourData in forecastHoursData) {
         Weather weather = Weather(hourData, true);
         _weatherForecast.currentDayHourlyWeather.add(weather);
-
-        if (weather.rainAmount! > 0) {
-          ScheduledNotifications.itWillRain(true);
-        }
       }
 
       notifyListeners();
@@ -76,12 +72,14 @@ class WeatherProvider extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = jsonDecode(response.body);
-      final List<dynamic> forecastDaysData = data['DailyForecasts'];
+      ScheduledNotifications.setDailyWeatherSummaryHeadlineText(data['Headline']['Text']);
 
+      final List<dynamic> forecastDaysData = data['DailyForecasts'];
       for (var dayData in forecastDaysData) {
         Weather weather = Weather(dayData, false);
         _weatherForecast.futureDaysDailyWeather.add(weather);
       }
+      ScheduledNotifications.itMayRain(_weatherForecast.futureDaysDailyWeather[0].rainProbability! >= 10);
 
       notifyListeners();
     }
