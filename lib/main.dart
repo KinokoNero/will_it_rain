@@ -7,10 +7,9 @@ import 'package:will_it_rain/services/notification_service.dart';
 import 'package:will_it_rain/widgets/current_day_weather_widget.dart';
 import 'package:will_it_rain/widgets/future_days_weather_widget.dart';
 
-final LocationService locationService = LocationService();
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  LocationService();
   await NotificationService().init();
 
   runApp(
